@@ -5,12 +5,15 @@ import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
+import android.view.View
 import android.widget.FrameLayout
+import androidx.customview.widget.ViewDragHelper
 import com.show.slideback.SlideWatcher
-import com.show.slideback.const.SlideConst.slideEdgeDistant
-import com.show.slideback.const.SlideConst.slideEdgeRate
-import com.show.slideback.const.SlideConst.slideEdgeYOff
+import com.show.slideback.util.Config.maxSideLength
+import com.show.slideback.util.Config.slideEdgeYOff
+
 import kotlin.math.abs
+import kotlin.math.max
 
 /**
  *  com.show.slideback.widget
@@ -22,50 +25,103 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
-    private val maxSideLength = slideEdgeDistant
-    private var downX = 0f
-    private var allowToSlideBack = false
-    private var slideLength = 0f
 
-    override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
-        return ev.action == MotionEvent.ACTION_DOWN && inRange(ev) && inRangeY(ev)
-    }
+    private var previewChild: View? = null
+    private var shadowView: View? = null
+    private var contentChild: View? = null
+    private var helper: ViewDragHelper? = null
+    private var offsetX = 0
+    var enableToSlideBack = true
 
-    @SuppressLint("ClickableViewAccessibility")
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        when(event.action){
-            MotionEvent.ACTION_DOWN ->{
-                downX = event.rawX
-                if(inRange(event)){
-                    allowToSlideBack = true
-                }
-            }
-            MotionEvent.ACTION_MOVE ->{
-                if(allowToSlideBack){
-                    val moveX = abs(event.rawX - downX)
-                    slideLength = (moveX / slideEdgeRate).coerceAtMost(maxSideLength)
-                }
-            }
-            MotionEvent.ACTION_UP ->{
-                if(allowToSlideBack
-                    && !inRange(event)
-                    && inRangeY(event)
-                    && slideLength >= maxSideLength){
-                    onSliderBackListener?.invoke()
-                }
-                slideLength = 0f
-                allowToSlideBack = false
-            }
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        super.onLayout(changed, left, top, right, bottom)
+        if (childCount == 2 && previewChild == null) {
+            initHelper()
+            previewChild!!.translationX = (-measuredWidth * 0.5f)
+            //shadowView!!.translationX = -shadowView!!.measuredWidth.toFloat()
         }
-        return true
     }
 
-    private fun inRange(ev: MotionEvent) = (ev.rawX <= maxSideLength || ev.rawX >= width - maxSideLength)
+    private fun initHelper() {
+        previewChild = getChildAt(0)
+        //shadowView = getChildAt(1)
+        contentChild = getChildAt(1)
+        helper = ViewDragHelper.create(this, 1f, object : ViewDragHelper.Callback() {
+
+            override fun tryCaptureView(child: View, pointerId: Int): Boolean {
+                return contentChild == child
+            }
+
+            override fun clampViewPositionHorizontal(child: View, left: Int, dx: Int): Int {
+                offsetX = max(0, left)
+                return offsetX
+            }
+
+            override fun onViewDragStateChanged(state: Int) {
+
+            }
+
+            override fun clampViewPositionVertical(child: View, top: Int, dy: Int): Int {
+                return 0
+            }
+
+
+            override fun onEdgeDragStarted(edgeFlags: Int, pointerId: Int) {
+                helper?.captureChildView(contentChild!!, pointerId)
+            }
+
+            override fun onViewReleased(releasedChild: View, xvel: Float, yvel: Float) {
+                if (offsetX > width / 2f) {
+                    helper?.settleCapturedViewAt(width, 0)
+                    onSliderBackListener?.invoke()
+                } else {
+                    helper?.settleCapturedViewAt(0, 0)
+                    offsetX = 0
+                }
+                invalidate()
+            }
+
+            override fun onViewPositionChanged(
+                changedView: View,
+                left: Int,
+                top: Int,
+                dx: Int,
+                dy: Int
+            ) {
+                previewChild!!.translationX = (-measuredWidth * 0.5f + left * 0.5f).coerceAtMost(0f)
+               // shadowView!!.translationX = (-shadowView!!.measuredWidth.toFloat() + left).coerceAtMost(0f)
+            }
+
+        })
+        helper?.setEdgeTrackingEnabled(ViewDragHelper.EDGE_LEFT)
+    }
+
+    override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
+        return helper?.shouldInterceptTouchEvent(event) ?: super.onInterceptTouchEvent(event)
+    }
+
+    private fun inRange(ev: MotionEvent) = (ev.rawX <= maxSideLength)
 
     private fun inRangeY(ev: MotionEvent) = ev.rawY >= measuredHeight * slideEdgeYOff
 
-    private var onSliderBackListener:(()->Unit)? = null
-    fun setOnSliderBackListener(onSliderBackListener:(()->Unit)) {
+
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        helper?.processTouchEvent(event)
+        return event.action == MotionEvent.ACTION_DOWN && inRange(event) && inRangeY(event) && enableToSlideBack
+    }
+
+
+    override fun computeScroll() {
+        helper?.apply {
+            if (continueSettling(true)) {
+                invalidate()
+            }
+        }
+    }
+
+    private var onSliderBackListener: (() -> Unit)? = null
+    fun setOnSliderBackListener(onSliderBackListener: (() -> Unit)) {
         this.onSliderBackListener = onSliderBackListener
     }
 

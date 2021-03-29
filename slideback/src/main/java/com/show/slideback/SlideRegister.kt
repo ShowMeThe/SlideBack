@@ -5,6 +5,7 @@ import android.app.Application
 import android.os.Bundle
 import android.util.ArrayMap
 import com.show.slideback.annotation.SlideBackBinder
+import com.show.slideback.annotation.SlideBackPreview
 import java.lang.ref.WeakReference
 import java.util.*
 
@@ -14,23 +15,15 @@ import java.util.*
  *  10:14
  *  ShowMeThe
  */
-class SlideRegister private constructor(val application: Application) {
+class SlideRegister  {
 
     companion object {
-        private var register: SlideRegister? = null
+        private lateinit var application:Application
+        val register: SlideRegister by lazy { SlideRegister() }
         fun init(application: Application) {
-            if (register == null) {
-                synchronized(SlideRegister::class.java) {
-                    if (register == null) {
-                        register = SlideRegister(application)
-                    }
-                }
-            }
+            this.application = application
+            register.registerApplication()
         }
-    }
-
-    init {
-        registerApplication()
     }
 
     private fun registerApplication() {
@@ -40,9 +33,15 @@ class SlideRegister private constructor(val application: Application) {
                 if(isActivityCanSlide(activity)){
                     activityWatcher[activity] = SlideWatcher(activity)
                         .setOnSliderBackListener{
-                            activity.onBackPressed()
+                            activity.finish()
+                            activity.overridePendingTransition(0,0)
                         }
                 }
+
+                if(isActivityCanPreview(activity)){
+                    activityPreviews.add(activity)
+                }
+
             }
 
             override fun onActivityStarted(activity: Activity) {
@@ -64,13 +63,20 @@ class SlideRegister private constructor(val application: Application) {
                 if(isActivityCanSlide(activity)){
                     activityWatcher.remove(activity)
                 }
+                if(isActivityCanPreview(activity)){
+                    activityPreviews.remove(activity)
+                }
             }
         })
     }
 
+    val activityPreviews by lazy { LinkedList<Activity>() }
     private val activityWatcher by lazy { ArrayMap<Activity,SlideWatcher>() }
 
     private fun isActivityCanSlide(activity: Activity) =
         activity::class.java.isAnnotationPresent(SlideBackBinder::class.java)
+
+    private fun isActivityCanPreview(activity: Activity) =
+        activity::class.java.isAnnotationPresent(SlideBackPreview::class.java)
 
 }

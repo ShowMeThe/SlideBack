@@ -40,4 +40,5 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation project(":slideback")
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation("com.github.ShowMeThe:InitializerApp:1.0.2")
 }

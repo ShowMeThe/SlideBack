@@ -10,3 +10,8 @@ package com.show.slideback.annotation
 @Target(AnnotationTarget.CLASS)
 annotation class SlideBackBinder {
 }
+
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.CLASS)
+annotation class SlideBackPreview {
+}

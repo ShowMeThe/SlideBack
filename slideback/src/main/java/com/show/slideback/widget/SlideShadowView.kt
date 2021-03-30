@@ -19,9 +19,7 @@ class SlideShadowView @JvmOverloads constructor(
 ) : View(context, attrs, defStyleAttr) {
 
    private val colors = intArrayOf(
-        Color.parseColor("#000000"),
-        Color.parseColor("#000000"),
-        Color.parseColor("#000000")
+       Color.parseColor("#00000000"), Color.parseColor("#0A000000"), Color.parseColor("#A1000000")
     )
     private val mLinearGradient by lazy { LinearGradient(0f, 0f, measuredWidth.toFloat(), 0f, colors, null, Shader.TileMode.REPEAT) }
     private val mPaint by lazy {
@@ -29,7 +27,7 @@ class SlideShadowView @JvmOverloads constructor(
             isAntiAlias = true
         }
     }
-    private val mRectF by lazy { RectF(0f,measuredWidth.toFloat(),0f,measuredHeight.toFloat()) }
+    private val mRectF by lazy { RectF(0f,0f,measuredWidth.toFloat(),measuredHeight.toFloat()) }
 
     override fun onDraw(canvas: Canvas) {
         mPaint.shader = mLinearGradient

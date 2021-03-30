@@ -3,16 +3,11 @@ package com.show.slideback.widget
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
 import androidx.customview.widget.ViewDragHelper
-import com.show.slideback.SlideWatcher
-import com.show.slideback.util.Config.maxSideLength
-import com.show.slideback.util.Config.slideEdgeYOff
-
-import kotlin.math.abs
+import com.show.slideback.util.Config
 import kotlin.math.max
 
 /**
@@ -35,17 +30,17 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
-        if (childCount == 2 && previewChild == null) {
+        if (childCount == 3 && previewChild == null) {
             initHelper()
             previewChild!!.translationX = (-measuredWidth * 0.5f)
-            //shadowView!!.translationX = -shadowView!!.measuredWidth.toFloat()
+            shadowView!!.translationX = -shadowView!!.measuredWidth.toFloat()
         }
     }
 
     private fun initHelper() {
         previewChild = getChildAt(0)
-        //shadowView = getChildAt(1)
-        contentChild = getChildAt(1)
+        shadowView = getChildAt(1)
+        contentChild = getChildAt(2)
         helper = ViewDragHelper.create(this, 1f, object : ViewDragHelper.Callback() {
 
             override fun tryCaptureView(child: View, pointerId: Int): Boolean {
@@ -88,8 +83,8 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
                 dx: Int,
                 dy: Int
             ) {
-                previewChild!!.translationX = (-measuredWidth * 0.5f + left * 0.5f).coerceAtMost(0f)
-               // shadowView!!.translationX = (-shadowView!!.measuredWidth.toFloat() + left).coerceAtMost(0f)
+                previewChild!!.translationX = ((-measuredWidth + left ) * Config.getConfig().slideSpeed).coerceAtMost(0f)
+                shadowView!!.translationX = (-shadowView!!.measuredWidth.toFloat() + left)
             }
 
         })
@@ -100,9 +95,9 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
         return helper?.shouldInterceptTouchEvent(event) ?: super.onInterceptTouchEvent(event)
     }
 
-    private fun inRange(ev: MotionEvent) = (ev.rawX <= maxSideLength)
+    private fun inRange(ev: MotionEvent) = (ev.rawX <= Config.getConfig().maxSideLength)
 
-    private fun inRangeY(ev: MotionEvent) = ev.rawY >= measuredHeight * slideEdgeYOff
+    private fun inRangeY(ev: MotionEvent) = ev.rawY >= measuredHeight * Config.getConfig().slideEdgeYOff
 
 
     @SuppressLint("ClickableViewAccessibility")

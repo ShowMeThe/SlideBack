@@ -7,6 +7,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
+import com.show.slideback.util.Config
 import com.show.slideback.util.Utils
 import com.show.slideback.widget.SlideBackInterceptLayout
 import com.show.slideback.widget.SlideBackPreview
@@ -47,11 +48,11 @@ class SlideWatcher(val activity: Activity) {
                         view, ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.MATCH_PARENT
                     )
-                    /*val shadowView = SlideShadowView(activity)
+                    val shadowView = SlideShadowView(activity)
                     interceptLayout.addView(
-                        shadowView, 100,
+                        shadowView, Config.getConfig().shadowWidth,
                         ViewGroup.LayoutParams.MATCH_PARENT
-                    )*/
+                    )
 
                     if (act is LifecycleOwner) {
                         act.lifecycle.addObserver(object : LifecycleObserver {

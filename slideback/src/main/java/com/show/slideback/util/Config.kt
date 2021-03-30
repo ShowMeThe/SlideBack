@@ -6,10 +6,19 @@ package com.show.slideback.util
  *  22:25
  *  ShowMeThe
  */
-object Config {
+class Config {
+
+    companion object{
+        private val instant by lazy { Config() }
+        fun getConfig() = instant
+    }
+
+    var shadowWidth = 50
 
     var maxSideLength = 50f
 
     var slideEdgeYOff = 0.3f
+
+    var slideSpeed = 0.5f
 
 }

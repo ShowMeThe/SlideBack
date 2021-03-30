@@ -1,6 +1,7 @@
 package com.show.slideback
 
 import android.app.Activity
+import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.lifecycle.Lifecycle
@@ -43,7 +44,7 @@ class SlideWatcher(val activity: Activity) {
                     val view = SlideBackPreview(activity)
                     view.fadeBackGroundColor = color
                     view.weakAct = WeakReference(act)
-
+                    view.visibility = View.INVISIBLE
                     interceptLayout.addView(
                         view, ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.MATCH_PARENT

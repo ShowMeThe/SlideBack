@@ -83,6 +83,7 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
                 dx: Int,
                 dy: Int
             ) {
+                previewChild!!.visibility = View.VISIBLE
                 previewChild!!.translationX = ((-measuredWidth + left ) * Config.getConfig().slideSpeed).coerceAtMost(0f)
                 shadowView!!.translationX = (-shadowView!!.measuredWidth.toFloat() + left)
             }

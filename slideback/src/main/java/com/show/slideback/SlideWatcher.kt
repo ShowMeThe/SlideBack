@@ -33,7 +33,7 @@ class SlideWatcher(val activity: Activity) {
         val rootView = decorView.getChildAt(0)
         if (rootView != null) {
             decorView.removeViewAt(0)
-            val interceptLayout = SlideBackInterceptLayout(activity)
+            val interceptLayout = SlideBackInterceptLayout(activity.applicationContext)
             interceptLayout.setOnSliderBackListener {
                 onSliderBackListener?.invoke()
             }
@@ -65,6 +65,7 @@ class SlideWatcher(val activity: Activity) {
                             @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
                             fun onDestroy() {
                                 interceptLayout.enableToSlideBack = false
+                                act.lifecycle.removeObserver(this)
                             }
                         })
                     }

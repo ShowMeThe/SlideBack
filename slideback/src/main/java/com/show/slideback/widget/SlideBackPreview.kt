@@ -29,10 +29,10 @@ class SlideBackPreview @JvmOverloads constructor(
     set(value) {
         field = value
         if(weakAct?.get() != null && !weakAct?.get()!!.isFinishing){
-            contentView = Utils.getContentView(weakAct?.get()!!)
+            contentView = WeakReference(Utils.getContentView(weakAct?.get()!!))
         }
     }
-    private var contentView: View? = null
+    private var contentView: WeakReference<View>? = null
         set(value) {
             field = value
             if (field != null) {
@@ -49,12 +49,13 @@ class SlideBackPreview @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         canvas.drawRect(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat(), paint)
-        contentView?.draw(canvas)
+        contentView?.get()?.draw(canvas)
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         contentView = null
+        weakAct = null
     }
 
 }

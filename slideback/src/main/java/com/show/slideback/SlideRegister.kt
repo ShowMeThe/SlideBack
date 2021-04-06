@@ -37,15 +37,15 @@ class SlideRegister  {
         application.registerActivityLifecycleCallbacks(object :
             Application.ActivityLifecycleCallbacks {
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-                if(isActivityCanPreview(activity)){
-                    activityPreviews.add(SliderPreWatch(activity))
-                }
                 if(isActivityCanSlide(activity)){
                     activityWatcher[activity] = SlideWatcher(activity)
                         .setOnSliderBackListener{
                             activity.finish()
                             activity.overridePendingTransition(0,0)
                         }
+                }
+                if(isActivityCanPreview(activity)){
+                    activityPreviews.add(SliderPreWatch(activity))
                 }
             }
 
@@ -59,7 +59,7 @@ class SlideRegister  {
                 if(isActivityCanPreview(activity)){
                     val index = activityPreviews.indexOf(SliderPreWatch(activity))
                     if(index >= 0){
-                        activityPreviews[index].contentView = Utils.getContentView(activity)
+                       // activityPreviews[index].contentView = Utils.getContentView(activity)
                     }
                 }
             }

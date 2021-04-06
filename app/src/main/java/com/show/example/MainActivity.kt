@@ -14,10 +14,6 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.btn).setOnClickListener {
             startActivity(Intent(this, MainActivity2::class.java))
-
-            it.postDelayed({
-                (it as Button).text = "onPause"
-            }, 2500)
         }
 
 

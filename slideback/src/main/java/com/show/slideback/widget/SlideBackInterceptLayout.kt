@@ -2,7 +2,9 @@ package com.show.slideback.widget
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.Configuration
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
@@ -21,6 +23,7 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
 
+    private var orientation = Configuration.ORIENTATION_PORTRAIT
     private var previewChild: View? = null
     private var shadowView: View? = null
     private var contentChild: View? = null
@@ -97,7 +100,10 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
         return helper?.shouldInterceptTouchEvent(event) ?: super.onInterceptTouchEvent(event)
     }
 
-    private fun inRange(ev: MotionEvent) = (ev.rawX <= Config.getConfig().maxSideLength)
+    private fun inRange(ev: MotionEvent):Boolean{
+        return ev.rawX <= measuredWidth * 0.05f
+    }
+
 
     private fun inRangeY(ev: MotionEvent) =
         ev.rawY >= measuredHeight * Config.getConfig().slideEdgeYOff
@@ -108,7 +114,6 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
         helper?.processTouchEvent(event)
         return event.action == MotionEvent.ACTION_DOWN
                 && inRange(event)
-                && inRangeY(event)
                 && if (previewChild == null) {
             false
         } else {

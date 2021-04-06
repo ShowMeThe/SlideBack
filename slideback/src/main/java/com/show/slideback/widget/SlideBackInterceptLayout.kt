@@ -84,7 +84,8 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
                 dy: Int
             ) {
                 previewChild!!.visibility = View.VISIBLE
-                previewChild!!.translationX = ((-measuredWidth + left ) * Config.getConfig().slideSpeed).coerceAtMost(0f)
+                previewChild!!.translationX =
+                    ((-measuredWidth + left) * Config.getConfig().slideSpeed).coerceAtMost(0f)
                 shadowView!!.translationX = (-shadowView!!.measuredWidth.toFloat() + left)
             }
 
@@ -98,13 +99,21 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
 
     private fun inRange(ev: MotionEvent) = (ev.rawX <= Config.getConfig().maxSideLength)
 
-    private fun inRangeY(ev: MotionEvent) = ev.rawY >= measuredHeight * Config.getConfig().slideEdgeYOff
+    private fun inRangeY(ev: MotionEvent) =
+        ev.rawY >= measuredHeight * Config.getConfig().slideEdgeYOff
 
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
         helper?.processTouchEvent(event)
-        return event.action == MotionEvent.ACTION_DOWN && inRange(event) && inRangeY(event) && enableToSlideBack
+        return event.action == MotionEvent.ACTION_DOWN
+                && inRange(event)
+                && inRangeY(event)
+                && if (previewChild == null) {
+            false
+        } else {
+            (previewChild as SlideBackPreview).enableToSlideBack
+        }
     }
 
 

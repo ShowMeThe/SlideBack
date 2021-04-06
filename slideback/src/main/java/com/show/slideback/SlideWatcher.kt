@@ -33,45 +33,30 @@ class SlideWatcher(val activity: Activity) {
         val rootView = decorView.getChildAt(0)
         if (rootView != null) {
             decorView.removeViewAt(0)
-            val interceptLayout = SlideBackInterceptLayout(activity.applicationContext)
+            val interceptLayout = SlideBackInterceptLayout(SlideRegister.application)
             interceptLayout.setOnSliderBackListener {
                 onSliderBackListener?.invoke()
             }
             if (!SlideRegister.register.activityPreviews.isNullOrEmpty()) {
                 val act = SlideRegister.register.activityPreviews.last
-                if (act != null && !act.isFinishing) {
-                    val color = Utils.getWindowBackgroundColor(act)
-                    val view = SlideBackPreview(activity)
+                if (act != null && !act.activity.isFinishing) {
+                    val color = Utils.getWindowBackgroundColor(act.activity)
+                    val view = SlideBackPreview(SlideRegister.application)
+                    view.weakWatch = WeakReference(act)
                     view.fadeBackGroundColor = color
-                    view.weakAct = WeakReference(act)
                     view.visibility = View.INVISIBLE
                     interceptLayout.addView(
                         view, ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.MATCH_PARENT
                     )
-                    val shadowView = SlideShadowView(activity)
+                    val shadowView = SlideShadowView(SlideRegister.application)
                     interceptLayout.addView(
                         shadowView, Config.getConfig().shadowWidth,
                         ViewGroup.LayoutParams.MATCH_PARENT
                     )
-
-                    if (act is LifecycleOwner) {
-                        act.lifecycle.addObserver(object : LifecycleObserver {
-                            @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-                            fun onPause() {
-                                view.weakAct = WeakReference(act)
-                            }
-
-                            @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-                            fun onDestroy() {
-                                interceptLayout.enableToSlideBack = false
-                                act.lifecycle.removeObserver(this)
-                            }
-                        })
-                    }
                 }
             }
-            val fakeBackground = FrameLayout(activity)
+            val fakeBackground = FrameLayout(SlideRegister.application)
                 .apply {
                     setBackgroundColor(Utils.getWindowBackgroundColor(activity))
                 }

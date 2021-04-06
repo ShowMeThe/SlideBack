@@ -41,4 +41,5 @@ dependencies {
     implementation project(":slideback")
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation("com.github.ShowMeThe:InitializerApp:1.0.2")
+    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.7")
 }

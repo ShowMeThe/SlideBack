@@ -59,7 +59,7 @@ class SlideRegister  {
                 if(isActivityCanPreview(activity)){
                     val index = activityPreviews.indexOf(SliderPreWatch(activity))
                     if(index >= 0){
-                       // activityPreviews[index].contentView = Utils.getContentView(activity)
+                        activityPreviews[index].contentView = Utils.getContentView(activity)
                     }
                 }
             }

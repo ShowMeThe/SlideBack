@@ -100,25 +100,26 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
         return helper?.shouldInterceptTouchEvent(event) ?: super.onInterceptTouchEvent(event)
     }
 
-    private fun inRange(ev: MotionEvent):Boolean{
+    private fun inRange(ev: MotionEvent): Boolean {
         return ev.rawX <= measuredWidth * 0.05f
     }
 
 
-    private fun inRangeY(ev: MotionEvent) =
-        ev.rawY >= measuredHeight * Config.getConfig().slideEdgeYOff
-
-
+    private var slideLegal = false
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        helper?.processTouchEvent(event)
-        return event.action == MotionEvent.ACTION_DOWN
-                && inRange(event)
-                && if (previewChild == null) {
-            false
-        } else {
-            (previewChild as SlideBackPreview).enableToSlideBack
+        if (event.action == MotionEvent.ACTION_DOWN && inRange(event) &&
+            previewChild != null
+            && (previewChild as SlideBackPreview).enableToSlideBack) {
+            slideLegal = true
         }
+        if (slideLegal) {
+            helper?.processTouchEvent(event)
+        }
+        if (event.action == MotionEvent.ACTION_UP) {
+            slideLegal = false
+        }
+        return true
     }
 
 

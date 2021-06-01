@@ -1,5 +1,7 @@
 package com.show.slideback.util
 
+import androidx.annotation.FloatRange
+
 /**
  *  com.show.slideback.util
  *  2021/3/29
@@ -19,6 +21,7 @@ class Config {
 
     var slideEdgeYOff = 0.3f
 
+    @FloatRange(from = 0.2,to = 1.0)
     var slideSpeed = 0.5f
 
 }

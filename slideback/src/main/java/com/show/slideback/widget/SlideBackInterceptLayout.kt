@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.VelocityTracker
 import android.view.View
@@ -103,8 +104,9 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
                 dy: Int
             ) {
                 previewChild?.visibility = View.VISIBLE
-                previewChild?.translationX =
-                    ((-measuredWidth + left) * Config.getConfig().slideSpeed).coerceAtMost(0f)
+                previewChild?.visibility = View.VISIBLE
+                previewChild?.translationX = ((-measuredWidth + left) * Config.getConfig().slideSpeed).coerceAtMost(0f)
+
                 shadowView?.translationX = (-shadowView!!.measuredWidth.toFloat() + left)
             }
 
@@ -117,23 +119,22 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
         val layoutWidth = width.toFloat()
         contentChild?.apply {
             translationX = offsetX.toFloat()
+            val ptx = previewChild!!.translationX
             animate()
                 .withEndAction {
                     onSliderBackListener?.invoke()
+                }
+                .setUpdateListener {
+                    val value = it.animatedValue as Float
+                    previewChild?.translationX = ptx * (1 - value)
                 }
                 .translationX(layoutWidth)
                 .setInterpolator(interpolator)
                 .setDuration(duration)
                 .start()
         }
-        previewChild?.apply {
-            animate()
-                .translationX(0f)
-                .setInterpolator(interpolator)
-                .setDuration(duration).start()
-        }
         shadowView?.apply {
-            visibility = View.GONE
+             visibility = View.GONE
         }
     }
 

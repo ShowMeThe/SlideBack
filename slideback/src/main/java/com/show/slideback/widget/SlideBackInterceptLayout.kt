@@ -167,7 +167,7 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
                     mScaledMaximumFlingVelocity.toFloat()
                 )
                 val velocityX = mVelocityTracker?.xVelocity ?: mScaledMinimumFlingVelocity.toFloat()
-                isFling = velocityX >= (mScaledMaximumFlingVelocity * 0.4)
+                isFling = velocityX >= (mScaledMaximumFlingVelocity * 0.25)
                 mVelocityTracker?.clear()
                 mVelocityTracker?.recycle()
                 mVelocityTracker = null

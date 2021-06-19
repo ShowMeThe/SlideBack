@@ -1,5 +1,6 @@
 package com.show.slideback.widget
 
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
@@ -26,7 +27,6 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
 
-    private var orientation = Configuration.ORIENTATION_PORTRAIT
     private var previewChild: View? = null
     private var shadowView: View? = null
     private var contentChild: View? = null
@@ -37,9 +37,7 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
     private val mScaledMinimumFlingVelocity by lazy { config.scaledMinimumFlingVelocity }
     private val mScaledMaximumFlingVelocity by lazy { config.scaledMaximumFlingVelocity }
     private var mVelocityTracker: VelocityTracker? = null
-    private var isFling = false
-    private val interpolator = FastOutLinearInInterpolator()
-    private val duration = 300L
+    private var isFlingOut = false
 
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
@@ -81,15 +79,12 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
 
             override fun onViewReleased(releasedChild: View, xvel: Float, yvel: Float) {
                 when {
-                    isFling -> {
-                        tryToDoAnimator()
-                    }
-                    offsetX > width / 2f -> {
-                        helper?.settleCapturedViewAt(width, 0)
+                    offsetX > width / 2f  || isFlingOut-> {
+                        helper?.smoothSlideViewTo(releasedChild, width, 0)
                         onSliderBackListener?.invoke()
                     }
                     else -> {
-                        helper?.settleCapturedViewAt(0, 0)
+                        helper?.settleCapturedViewAt(0,0)
                         offsetX = 0
                     }
                 }
@@ -104,9 +99,7 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
                 dy: Int
             ) {
                 previewChild?.visibility = View.VISIBLE
-                previewChild?.visibility = View.VISIBLE
                 previewChild?.translationX = ((-measuredWidth + left) * Config.getConfig().slideSpeed).coerceAtMost(0f)
-
                 shadowView?.translationX = (-shadowView!!.measuredWidth.toFloat() + left)
             }
 
@@ -114,29 +107,6 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
         helper?.setEdgeTrackingEnabled(ViewDragHelper.EDGE_LEFT)
     }
 
-
-    private fun tryToDoAnimator() {
-        val layoutWidth = width.toFloat()
-        contentChild?.apply {
-            translationX = offsetX.toFloat()
-            val ptx = previewChild!!.translationX
-            animate()
-                .withEndAction {
-                    onSliderBackListener?.invoke()
-                }
-                .setUpdateListener {
-                    val value = it.animatedValue as Float
-                    previewChild?.translationX = ptx * (1 - value)
-                }
-                .translationX(layoutWidth)
-                .setInterpolator(interpolator)
-                .setDuration(duration)
-                .start()
-        }
-        shadowView?.apply {
-             visibility = View.GONE
-        }
-    }
 
     override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
         return helper?.shouldInterceptTouchEvent(event) ?: super.onInterceptTouchEvent(event)
@@ -167,7 +137,7 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
                     mScaledMaximumFlingVelocity.toFloat()
                 )
                 val velocityX = mVelocityTracker?.xVelocity ?: mScaledMinimumFlingVelocity.toFloat()
-                isFling = velocityX >= (mScaledMaximumFlingVelocity * 0.4)
+                isFlingOut = velocityX >= (mScaledMaximumFlingVelocity * 0.3)
                 mVelocityTracker?.clear()
                 mVelocityTracker?.recycle()
                 mVelocityTracker = null

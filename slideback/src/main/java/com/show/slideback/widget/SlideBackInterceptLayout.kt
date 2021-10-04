@@ -109,7 +109,8 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
 
 
     override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
-        return helper?.shouldInterceptTouchEvent(event) ?: super.onInterceptTouchEvent(event)
+        return (helper?.shouldInterceptTouchEvent(event)  ?: super.onInterceptTouchEvent(event)
+                || event.action == MotionEvent.ACTION_DOWN)
     }
 
     private fun inRange(ev: MotionEvent) = (ev.rawX <= Config.getConfig().maxSideLength)
@@ -119,7 +120,7 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        if (event.action == MotionEvent.ACTION_DOWN && inRange(event) &&
+        if ((event.action == MotionEvent.ACTION_DOWN) && inRange(event) &&
             previewChild != null && (previewChild as SlideBackPreview).enableToSlideBack
         ) {
             slideLegal = true

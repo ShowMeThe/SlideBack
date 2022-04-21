@@ -17,9 +17,8 @@ class Config {
 
     var shadowWidth = 50
 
-    var maxSideLength = 50f
+    var maxSideLength = 120f
 
-    var slideEdgeYOff = 0.3f
 
     @FloatRange(from = 0.2,to = 1.0)
     var slideSpeed = 0.5f

@@ -1,21 +1,13 @@
 package com.show.slideback
 
 import android.app.Activity
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.OnLifecycleEvent
-import com.show.slideback.util.Config
 import com.show.slideback.util.Utils
 import com.show.slideback.widget.SlideBackInterceptLayout
 import com.show.slideback.widget.SlideBackPreview
-import com.show.slideback.widget.SlideShadowView
 import java.lang.ref.WeakReference
-import kotlin.math.acos
 
 /**
  *  com.show.slideback
@@ -48,11 +40,6 @@ class SlideWatcher(val activity: Activity) {
                     view.visibility = View.INVISIBLE
                     interceptLayout.addView(
                         view, ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT
-                    )
-                    val shadowView = SlideShadowView(SlideRegister.application)
-                    interceptLayout.addView(
-                        shadowView, Config.getConfig().shadowWidth,
                         ViewGroup.LayoutParams.MATCH_PARENT
                     )
                 }

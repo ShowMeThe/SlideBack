@@ -144,7 +144,7 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
     }
 
     override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
-        return helper?.shouldInterceptTouchEvent(event) ?: super.onInterceptTouchEvent(event)
+        return helper?.shouldInterceptTouchEvent(event) ?: super.onInterceptTouchEvent(event) || inRange(event)
     }
 
     private fun inRange(ev: MotionEvent) = (ev.rawX <= Config.getConfig().maxSideLength)
@@ -179,6 +179,7 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
         }
         if (event.action == MotionEvent.ACTION_UP || event.action == MotionEvent.ACTION_CANCEL) {
             slideLegal = false
+            helper?.processTouchEvent(event)
         }
         return true
     }

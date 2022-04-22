@@ -7,4 +7,9 @@
     android:background="@color/cl"
     tools:context=".MainActivity3">
 
+    <com.show.example.ProgressWebView
+        android:id="@+id/webview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

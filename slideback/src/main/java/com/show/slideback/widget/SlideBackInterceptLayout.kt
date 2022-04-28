@@ -19,6 +19,7 @@ import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import com.show.slideback.R
 import com.show.slideback.util.Config
 import kotlin.math.max
+import kotlin.math.roundToInt
 
 /**
  *  com.show.slideback.widget
@@ -52,7 +53,12 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
         }
     }
 
-    private val mLeftDrawable by lazy { ContextCompat.getDrawable(context, R.drawable.shadow_bottom) }
+    private val mLeftDrawable by lazy {
+        ContextCompat.getDrawable(
+            context,
+            R.drawable.shadow_bottom
+        )
+    }
 
     private val mRect by lazy {
         Rect(0, 0, shadowSize, measuredHeight)
@@ -138,13 +144,18 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
     private fun drawShadow(canvas: Canvas, child: View) {
         val rect = mRect
         child.getHitRect(rect)
-        mLeftDrawable?.setBounds(child.left -
-                shadowSize,rect.top,rect.left,rect.bottom)
+        mLeftDrawable?.alpha = ((1 - (child.left.toFloat() / measuredWidth)) * 255).roundToInt()
+        mLeftDrawable?.setBounds(
+            child.left -
+                    shadowSize, rect.top, rect.left, rect.bottom
+        )
         mLeftDrawable?.draw(canvas)
     }
 
     override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
-        return helper?.shouldInterceptTouchEvent(event) ?: super.onInterceptTouchEvent(event) || inRange(event)
+        return helper?.shouldInterceptTouchEvent(event) ?: super.onInterceptTouchEvent(event) || inRange(
+            event
+        )
     }
 
     private fun inRange(ev: MotionEvent) = (ev.rawX <= Config.getConfig().maxSideLength)
@@ -202,9 +213,6 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
     fun setOnSliderBackListener(onSliderBackListener: (() -> Unit)) {
         this.onSliderBackListener = onSliderBackListener
     }
-
-
-
 
 
 }

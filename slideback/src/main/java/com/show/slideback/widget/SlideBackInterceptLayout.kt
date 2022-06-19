@@ -7,6 +7,7 @@ import android.graphics.*
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.util.Log
+import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.VelocityTracker
 import android.view.View
@@ -17,7 +18,8 @@ import androidx.core.view.ViewCompat
 import androidx.customview.widget.ViewDragHelper
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import com.show.slideback.R
-import com.show.slideback.util.Config
+import com.show.slideback.util.SlideConfig
+import java.util.logging.Logger
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -46,7 +48,9 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
     private var isFling = false
     private var isClosing = false
     private var slideLegal = false
-    private val shadowSize = Config.getConfig().shadowWidth
+    private val shadowSize = SlideConfig.getConfig().shadowWidth
+    private val slideMaxWidth by lazy { dp2Px(SlideConfig.getConfig().maxSlideX) }
+    private val sliderOffsetY by lazy { dp2Px(SlideConfig.getConfig().slideOffsetY) }
     private val mPaint by lazy {
         Paint().apply {
             isAntiAlias = true
@@ -69,7 +73,7 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
         super.onLayout(changed, left, top, right, bottom)
         if (childCount == 2 && previewChild == null) {
             initHelper()
-            previewChild?.translationX = (-measuredWidth * Config.getConfig().slideSpeed)
+            previewChild?.translationX = (-measuredWidth * SlideConfig.getConfig().slideSpeed)
         }
     }
 
@@ -125,7 +129,7 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
             ) {
                 previewChild?.visibility = View.VISIBLE
                 previewChild?.translationX =
-                    ((-measuredWidth + left) * Config.getConfig().slideSpeed).coerceAtMost(0f)
+                    ((-measuredWidth + left) * SlideConfig.getConfig().slideSpeed).coerceAtMost(0f)
                 postInvalidate()
             }
         })
@@ -146,24 +150,36 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
         child.getHitRect(rect)
         mLeftDrawable?.alpha = ((1 - (child.left.toFloat() / measuredWidth)) * 255).roundToInt()
         mLeftDrawable?.setBounds(
-            child.left -
-                    shadowSize, rect.top, rect.left, rect.bottom
+            child.left - shadowSize, rect.top, rect.left, rect.bottom
         )
         mLeftDrawable?.draw(canvas)
     }
 
     override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
-        return helper?.shouldInterceptTouchEvent(event) ?: super.onInterceptTouchEvent(event) || inRange(
-            event
-        )
+        val outYRange = outYRange(event)
+        return if (outYRange) {
+            (helper?.shouldInterceptTouchEvent(event) ?: super.onInterceptTouchEvent(
+                event
+            ) || inRange(
+                event
+            ))
+        } else {
+            super.onInterceptTouchEvent(event)
+        }
     }
 
-    private fun inRange(ev: MotionEvent) = (ev.rawX <= Config.getConfig().maxSideLength)
+    private fun dp2Px(dp: Float) = TypedValue.applyDimension(
+        TypedValue.COMPLEX_UNIT_DIP, dp,
+        context.resources.displayMetrics
+    )
 
+    private fun inRange(ev: MotionEvent) = (ev.rawX <= slideMaxWidth)
+
+    private fun outYRange(ev: MotionEvent) = (ev.rawY > sliderOffsetY)
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        if (event.action == MotionEvent.ACTION_DOWN && inRange(event) &&
+        if (event.action == MotionEvent.ACTION_DOWN && inRange(event) && outYRange(event) &&
             previewChild != null && (previewChild as SlideBackPreview).enableToSlideBack
         ) {
             slideLegal = true

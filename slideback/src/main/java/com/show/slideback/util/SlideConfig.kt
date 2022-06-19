@@ -1,5 +1,6 @@
 package com.show.slideback.util
 
+import android.util.TypedValue
 import androidx.annotation.FloatRange
 
 /**
@@ -8,19 +9,22 @@ import androidx.annotation.FloatRange
  *  22:25
  *  ShowMeThe
  */
-class Config {
+class SlideConfig {
 
     companion object{
-        private val instant by lazy { Config() }
+        private val instant by lazy { SlideConfig() }
         fun getConfig() = instant
     }
 
     var shadowWidth = 50
 
-    var maxSideLength = 120f
+    var maxSlideX = 30f
 
+    var slideOffsetY = 200f
 
     @FloatRange(from = 0.2,to = 1.0)
     var slideSpeed = 0.5f
 
 }
+
+

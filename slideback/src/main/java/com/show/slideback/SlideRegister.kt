@@ -7,7 +7,7 @@ import android.util.ArrayMap
 import android.util.Log
 import com.show.slideback.annotation.SlideBackBinder
 import com.show.slideback.annotation.SlideBackPreview
-import com.show.slideback.util.Config
+import com.show.slideback.util.SlideConfig
 import com.show.slideback.util.Utils
 import java.lang.ref.WeakReference
 import java.util.*
@@ -28,8 +28,8 @@ class SlideRegister  {
             register.registerApplication()
         }
 
-        fun config(onConfig: Config.()->Unit){
-            onConfig.invoke(Config.getConfig())
+        fun config(onConfig: SlideConfig.()->Unit){
+            onConfig.invoke(SlideConfig.getConfig())
         }
     }
 

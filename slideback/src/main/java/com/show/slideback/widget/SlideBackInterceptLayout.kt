@@ -32,9 +32,9 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
 
+    private var hasTouch = false
     private var orientation = Configuration.ORIENTATION_PORTRAIT
     private var previewChild: View? = null
-    private var shadowView: View? = null
     private var contentChild: View? = null
     private var helper: ViewDragHelper? = null
     private var offsetX = 0
@@ -79,6 +79,7 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
         helper = ViewDragHelper.create(this, object : ViewDragHelper.Callback() {
 
             override fun tryCaptureView(child: View, pointerId: Int): Boolean {
+                hasTouch = true
                 return contentChild == child
             }
 
@@ -135,7 +136,7 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
 
     override fun drawChild(canvas: Canvas, child: View?, drawingTime: Long): Boolean {
         val result = super.drawChild(canvas, child, drawingTime)
-        if (child != null && child !is SlideBackPreview) {
+        if (child != null && child !is SlideBackPreview && hasTouch) {
             drawShadow(canvas, child)
         }
         return result

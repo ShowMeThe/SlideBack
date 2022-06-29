@@ -59,7 +59,7 @@ afterEvaluate {
                 from components.release
                 groupId = 'com.show.slideback'
                 artifactId = 'slideback'
-                version = 'v2.4.4'
+                version = 'v2.4.6'
             }
         }
     }

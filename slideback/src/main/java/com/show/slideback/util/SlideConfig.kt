@@ -23,8 +23,10 @@ class SlideConfig {
     var slideOffsetY = 200f
 
     @FloatRange(from = 0.2,to = 1.0)
-    var slideSpeed = 0.5f
+    var previewOffset = 0.5f
 
+    @FloatRange(from = 0.1,to = 0.5)
+    var slideSpeed = 0.15f
 }
 
 

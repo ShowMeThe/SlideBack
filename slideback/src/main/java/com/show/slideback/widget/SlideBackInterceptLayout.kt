@@ -73,7 +73,7 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
         super.onLayout(changed, left, top, right, bottom)
         if (childCount == 2 && previewChild == null) {
             initHelper()
-            previewChild?.translationX = (-measuredWidth * SlideConfig.getConfig().slideSpeed)
+            previewChild?.translationX = (-measuredWidth * SlideConfig.getConfig().previewOffset)
         }
     }
 
@@ -130,7 +130,7 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
             ) {
                 previewChild?.visibility = View.VISIBLE
                 previewChild?.translationX =
-                    ((-measuredWidth + left) * SlideConfig.getConfig().slideSpeed).coerceAtMost(0f)
+                    ((-measuredWidth + left) * SlideConfig.getConfig().previewOffset).coerceAtMost(0f)
                 postInvalidate()
             }
         })
@@ -198,7 +198,7 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
                     mScaledMaximumFlingVelocity.toFloat()
                 )
                 val velocityX = mVelocityTracker?.xVelocity ?: mScaledMinimumFlingVelocity.toFloat()
-                isFling = velocityX >= (mScaledMaximumFlingVelocity * 0.25)
+                isFling = velocityX >= (mScaledMaximumFlingVelocity * SlideConfig.getConfig().slideSpeed)
                 mVelocityTracker?.clear()
                 mVelocityTracker?.recycle()
                 mVelocityTracker = null

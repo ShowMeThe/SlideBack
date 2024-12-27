@@ -1,6 +1,5 @@
 package com.show.slideback.widget
 
-import android.app.Activity
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
@@ -9,15 +8,9 @@ import android.graphics.RenderEffect
 import android.graphics.Shader
 import android.os.Build
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.OnLifecycleEvent
 import com.show.slideback.SliderPreWatch
-import com.show.slideback.util.Config
-import com.show.slideback.util.Utils
+import com.show.slideback.util.SlideConfig
 import java.lang.ref.WeakReference
 
 /**
@@ -32,8 +25,8 @@ class SlideBackPreview @JvmOverloads constructor(
 
 
     init {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && Config.getConfig().enableBlur) {
-            val radius = Config.getConfig().blurRadius
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && SlideConfig.getConfig().enableBlur) {
+            val radius = SlideConfig.getConfig().blurRadius
             setRenderEffect(RenderEffect.createBlurEffect(radius,radius, Shader.TileMode.CLAMP))
         }
     }

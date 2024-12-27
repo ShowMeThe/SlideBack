@@ -3,7 +3,13 @@ package com.show.example
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.transition.Fade
+import android.transition.Slide
+import android.transition.TransitionSet
+import android.view.Gravity
 import android.view.View
+import android.view.Window
+import android.view.animation.LinearInterpolator
 import android.widget.Button
 import android.widget.Toast
 import com.show.slideback.annotation.SlideBackBinder

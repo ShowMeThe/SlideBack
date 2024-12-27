@@ -36,12 +36,11 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
 
 
     private var hasTouch = false
-    private var orientation = Configuration.ORIENTATION_PORTRAIT
     private var previewChild: View? = null
     private var contentChild: View? = null
     private var helper: ViewDragHelper? = null
     private var offsetX = 0
-    var enableToSlideBack = true
+    private var enableToSlideBack = true
     private val config by lazy { ViewConfiguration.get(getContext()) }
     private val mScaledMinimumFlingVelocity by lazy { config.scaledMinimumFlingVelocity }
     private val mScaledMaximumFlingVelocity by lazy { config.scaledMaximumFlingVelocity }
@@ -49,7 +48,7 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
     private var isFling = false
     private var isClosing = false
     private var slideLegal = false
-    private val shadowSize = SlideConfig.getConfig().shadowWidth
+    private val shadowSize by lazy { dp2Px(SlideConfig.getConfig().shadowWidth).toInt() }
     private val slideMaxWidth by lazy { dp2Px(SlideConfig.getConfig().maxSlideX) }
     private val sliderOffsetY by lazy { dp2Px(SlideConfig.getConfig().slideOffsetY) }
     private val mPaint by lazy {
@@ -114,6 +113,7 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
                         isClosing = true
                         helper?.smoothSlideViewTo(contentChild!!, width, 0)
                     }
+
                     else -> {
                         helper?.settleCapturedViewAt(0, 0)
                         offsetX = 0
@@ -131,7 +131,9 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
             ) {
                 previewChild?.visibility = View.VISIBLE
                 previewChild?.translationX =
-                    ((-measuredWidth + left) * SlideConfig.getConfig().previewOffset).coerceAtMost(0f)
+                    ((-measuredWidth + left) * SlideConfig.getConfig().previewOffset).coerceAtMost(
+                        0f
+                    )
                 postInvalidate()
             }
         })
@@ -150,7 +152,7 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
     private fun drawShadow(canvas: Canvas, child: View) {
         val rect = mRect
         child.getHitRect(rect)
-        mLeftDrawable?.alpha = ((1 - (child.left.toFloat() / measuredWidth)) * 255).roundToInt()
+        //mLeftDrawable?.alpha = ((1 - (child.left.toFloat() / measuredWidth)) * 255).roundToInt()
         mLeftDrawable?.setBounds(
             child.left - shadowSize, rect.top, rect.left, rect.bottom
         )
@@ -199,7 +201,8 @@ class SlideBackInterceptLayout @JvmOverloads constructor(
                     mScaledMaximumFlingVelocity.toFloat()
                 )
                 val velocityX = mVelocityTracker?.xVelocity ?: mScaledMinimumFlingVelocity.toFloat()
-                isFling = velocityX >= (mScaledMaximumFlingVelocity * SlideConfig.getConfig().slideSpeed)
+                isFling =
+                    velocityX >= (mScaledMaximumFlingVelocity * SlideConfig.getConfig().slideSpeed)
                 mVelocityTracker?.clear()
                 mVelocityTracker?.recycle()
                 mVelocityTracker = null

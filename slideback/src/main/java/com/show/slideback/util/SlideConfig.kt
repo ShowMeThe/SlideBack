@@ -2,6 +2,7 @@ package com.show.slideback.util
 
 import android.util.TypedValue
 import androidx.annotation.FloatRange
+import androidx.annotation.IntRange
 
 /**
  *  com.show.slideback.util
@@ -16,11 +17,17 @@ class SlideConfig {
         fun getConfig() = instant
     }
 
-    var shadowWidth = 25
+    @FloatRange(from = 0.0,to = 15.0)
+    var shadowWidth = 7f
 
     var maxSlideX = 30f
 
     var slideOffsetY = 200f
+
+    var enableBlur = true
+
+    @FloatRange(from = 0.0,to = 35.0)
+    var blurRadius = 35f
 
     @FloatRange(from = 0.2,to = 1.0)
     var previewOffset = 0.5f

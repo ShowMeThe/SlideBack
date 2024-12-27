@@ -2,8 +2,9 @@ package com.show.example
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.webkit.WebView
 import com.show.slideback.annotation.SlideBackBinder
-import kotlinx.android.synthetic.main.activity_main3.*
+
 
 @SlideBackBinder
 class MainActivity3 : AppCompatActivity() {
@@ -11,6 +12,7 @@ class MainActivity3 : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main3)
 
-        webview.loadUrl("https://www.baidu.com/")
+        val webView = findViewById<WebView>(R.id.webview)
+        webView.loadUrl("https://www.baidu.com/")
     }
 }

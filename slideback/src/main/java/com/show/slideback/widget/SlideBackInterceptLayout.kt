@@ -1,5 +1,6 @@
 package com.show.slideback.widget
 
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration

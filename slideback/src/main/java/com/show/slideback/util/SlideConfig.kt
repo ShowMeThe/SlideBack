@@ -16,7 +16,7 @@ class SlideConfig {
         fun getConfig() = instant
     }
 
-    var shadowWidth = 50
+    var shadowWidth = 25
 
     var maxSlideX = 30f
 

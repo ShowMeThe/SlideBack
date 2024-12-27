@@ -3,6 +3,7 @@ package com.show.slideback.util
 import android.app.Activity
 import android.graphics.Color
 import android.util.Log
+import android.view.View
 import android.view.ViewGroup
 
 /**
@@ -13,7 +14,7 @@ import android.view.ViewGroup
  */
 object Utils {
 
-    fun getContentView(activity: Activity) = (activity.window.decorView as ViewGroup).getChildAt(0)
+    fun getContentView(activity: Activity): View? = (activity.window.decorView as ViewGroup).getChildAt(0)
 
     fun getWindowBackgroundColor(activity: Activity) = activity.let {
         val theme = it.theme

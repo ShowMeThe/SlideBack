@@ -3,15 +3,11 @@ package com.show.example
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.transition.Fade
-import android.transition.Slide
-import android.transition.TransitionSet
-import android.view.Gravity
-import android.view.Window
-import android.view.animation.LinearInterpolator
+import android.view.View
+import android.widget.Button
+import android.widget.Toast
 import com.show.slideback.annotation.SlideBackBinder
 import com.show.slideback.annotation.SlideBackPreview
-import kotlinx.android.synthetic.main.activity_main2.*
 
 @SlideBackPreview
 @SlideBackBinder
@@ -36,8 +32,9 @@ class MainActivity2 : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main2)
 
-        btn.setOnClickListener {
-            startActivity(Intent(this, MainActivity3::class.java))
+
+        findViewById<View>(R.id.ivLogo).setOnClickListener {
+            Toast.makeText(this,"test",Toast.LENGTH_LONG).show()
         }
 
     }

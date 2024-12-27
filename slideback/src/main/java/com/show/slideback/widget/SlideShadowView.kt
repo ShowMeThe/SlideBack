@@ -19,9 +19,9 @@ class SlideShadowView @JvmOverloads constructor(
 ) : View(context, attrs, defStyleAttr) {
 
    private val colors = intArrayOf(
-       Color.parseColor("#00000000"), Color.parseColor("#0A000000"), Color.parseColor("#A1000000")
+       Color.parseColor("#00000000"), Color.parseColor("#33000000"), Color.parseColor("#66000000")
     )
-    private val mLinearGradient by lazy { LinearGradient(0f, 0f, measuredWidth.toFloat(), 0f, colors, null, Shader.TileMode.REPEAT) }
+    private val mLinearGradient by lazy { LinearGradient(0f, 0f, measuredWidth.toFloat(), 0f, colors, null, Shader.TileMode.CLAMP) }
     private val mPaint by lazy {
         Paint().apply {
             isAntiAlias = true

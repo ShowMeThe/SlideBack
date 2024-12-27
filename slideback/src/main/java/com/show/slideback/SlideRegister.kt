@@ -2,6 +2,7 @@ package com.show.slideback
 
 import android.app.Activity
 import android.app.Application
+import android.os.Build
 import android.os.Bundle
 import android.util.ArrayMap
 import android.util.Log
@@ -41,7 +42,11 @@ class SlideRegister  {
                     activityWatcher[activity] = SlideWatcher(activity)
                         .setOnSliderBackListener{
                             activity.finish()
-                            activity.overridePendingTransition(0,0)
+                            if (Build.VERSION.SDK_INT >= 34) {
+                                activity.overrideActivityTransition(Activity.OVERRIDE_TRANSITION_CLOSE,0,0)
+                            }else{
+                                activity.overridePendingTransition(0,0)
+                            }
                         }
                 }
                 if(isActivityCanPreview(activity)){

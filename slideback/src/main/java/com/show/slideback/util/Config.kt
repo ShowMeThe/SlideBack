@@ -15,12 +15,11 @@ class Config {
         fun getConfig() = instant
     }
 
-    var shadowWidth = 50
-
-    var maxSideLength = 50f
-
-    var slideEdgeYOff = 0.3f
-
+    var shadowWidth = 25
+    var maxSideLength = 75f
+    var enableBlur = true
+    @FloatRange(from = 0.0,to = 150.0)
+    var blurRadius = 100f
     @FloatRange(from = 0.2,to = 1.0)
     var slideSpeed = 0.5f
 

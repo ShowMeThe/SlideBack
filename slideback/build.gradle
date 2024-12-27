@@ -1,12 +1,12 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'maven-publish'
+apply plugin: 'org.jetbrains.dokka'
 
 
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.1"
+    compileSdkVersion 35
 
     defaultConfig {
         minSdkVersion 21
@@ -17,7 +17,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
     }
-
+    namespace "com.show.slideback"
     buildTypes {
         release {
             minifyEnabled false
@@ -25,21 +25,25 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = '1.8'
-    }
-    libraryVariants.all { variant ->
-        variant.outputs.all {
-            outputFileName = "SlideBack_v${defaultConfig.versionName}_${variant.buildType.name}.aar"
-        }
+        jvmTarget = '17'
     }
 }
 
 afterEvaluate {
-    generateReleaseBuildConfig.enabled = false
+    publishing{
+        publications {
+            release(MavenPublication){
+                from components.release
+                groupId = "com.show.slideback"
+                artifactId = "slideback"
+                version = "2.5.1"
+            }
+        }
+    }
 }
 
 dependencies {
@@ -50,6 +54,3 @@ dependencies {
     compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2")
     compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.2")
 }
-
-apply plugin: 'com.github.dcendents.android-maven'
-group='com.github.ShowMeThe'
